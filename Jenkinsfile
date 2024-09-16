@@ -21,7 +21,9 @@ pipeline {
             post {
                 always {
                     script {
-                        sendEmailNotification('Test', currentBuild.result)
+                        mail to: "lachlancooper28@gmail.com",
+                            subject: "Test Stage",
+                            body: "This stage was successful"
                     }
                 }
             }
@@ -40,7 +42,9 @@ pipeline {
             post {
                 always {
                     script {
-                        sendEmailNotification('Security Scan', currentBuild.result)
+                        mail to: "lachlancooper28@gmail.com",
+                            subject: "Security stage", 
+                            body: "This stage was successful" 
                     }
                 }
             }
@@ -66,21 +70,4 @@ pipeline {
     }
 }
 
-def sendEmailNotification(stageName, buildStatus) {
-    emailext (
-        subject: "${stageName} Stage - Build ${buildStatus}",
-        body: """\
-            Hi Team,
 
-            The ${stageName} stage has completed with the status: ${buildStatus}.
-
-            Please find the attached logs for more details.
-
-            Regards,
-            Jenkins
-        """,
-        to: 's223362503@deakin.edu.au',
-        attachLog: true,
-        compressLog: true
-    )
-}
