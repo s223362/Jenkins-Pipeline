@@ -1,59 +1,71 @@
-pipeline{
+pipeline {
     agent any 
     environment {
         DIRECTORY_PATH = "/Users/lachl/OneDrive/Desktop/Uni/Y2 T2/SIT223 Professional Practice"
         TESTING_ENVIRONMENT = "Pipeline (test Environment)"
         PRODUCTION_ENVIRONMENT = "Lachlan Cooper"
     }
-    stages{
-        stage('Build'){
-            steps{
+    stages {
+        stage('Build') {
+            steps {
                 echo "Build using maven"
                 echo "compile the code and generate any necessary artifacts"
             }
         }
             
-        stage('Test'){
-            steps{
-                echo "Unit tests "
+        stage('Test') {
+            steps {
+                echo "Unit tests"
                 echo "integration tests using rational integration tester"
-                sendEmailNotification("test", "")
+            }
+            post {
+                always {
+                    script {
+                        sendEmailNotification('Test', currentBuild.result)
+                    }
+                }
             }
         }
 
-        stage('Code Analysis'){
-            steps{
+        stage('Code Analysis') {
+            steps {
                 echo "code analysis tool: codacy"
             }
         }
 
-        stage('Security Scan'){
-            steps{
+        stage('Security Scan') {
+            steps {
                 echo "Code scan using Codesecure"
-                sendEmailNotification(stageName, buildStatus)
+            }
+            post {
+                always {
+                    script {
+                        sendEmailNotification('Security Scan', currentBuild.result)
+                    }
+                }
             }
         }
         
-        stage('Deploy to Staging'){
-            steps{
+        stage('Deploy to Staging') {
+            steps {
                 echo " AWS EC2 Instance"
             }
         }
 
-        stage('Integration Tests on Staging'){
-            steps{
+        stage('Integration Tests on Staging') {
+            steps {
                 echo "runs integration tests on the environment"
             }
         }
         
-        stage('Deploy to Production'){
-            steps{
+        stage('Deploy to Production') {
+            steps {
                 echo "Code deployed in AWS EC2 Instance"
             }
         }
     }
-    
 }
+
 def sendEmailNotification(stageName, buildStatus) {
     emailext (
         subject: "${stageName} Stage - Build ${buildStatus}",
