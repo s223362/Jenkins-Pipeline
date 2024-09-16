@@ -8,39 +8,45 @@ pipeline{
     stages{
         stage('Build'){
             steps{
-                echo "fetch the source code from the directory path specified by the environment variable"
-                echo "comple the code and generate any neccessary artifacts"
+                echo "Build using maven"
+                echo "compile the code and generate any necessary artifacts"
             }
         }
             
         stage('Test'){
             steps{
                 echo "Unit tests "
-                echo "integration tests"
+                echo "integration tests using rational integration tester"
             }
         }
 
-        stage('Code'){
+        stage('Code Analysis'){
             steps{
-                echo "check the quality of the code "
+                echo "code analysis tool: codacy"
             }
         }
 
-        stage('Deploy'){
+        stage('Security Scan'){
             steps{
-                echo "Deploy the application to a testing environment specificed by the environment variable"
+                echo "Code scan using Codesecure"
             }
         }
         
-        stage('Approval'){
+        stage('Deploy to Staging'){
             steps{
-                sleep(10)
+                echo " AWS EC2 Instance"
             }
         }
 
+        stage('Integration Tests on Staging'){
+            steps{
+                echo "runs integration tests on the environment"
+            }
+        }
+        
         stage('Deploy to Production'){
             steps{
-                echo "Code deployed in $TESTING_ENVIRONMENT"
+                echo "Code deployed in AWS EC2 Instance"
             }
         }
     }
