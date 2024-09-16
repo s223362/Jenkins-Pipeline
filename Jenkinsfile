@@ -17,6 +17,7 @@ pipeline{
             steps{
                 echo "Unit tests "
                 echo "integration tests using rational integration tester"
+                sendEmailNotification("test", "")
             }
         }
 
@@ -29,6 +30,7 @@ pipeline{
         stage('Security Scan'){
             steps{
                 echo "Code scan using Codesecure"
+                sendEmailNotification(stageName, buildStatus)
             }
         }
         
@@ -51,4 +53,22 @@ pipeline{
         }
     }
     
+}
+def sendEmailNotification(stageName, buildStatus) {
+    emailext (
+        subject: "${stageName} Stage - Build ${buildStatus}",
+        body: """\
+            Hi Team,
+
+            The ${stageName} stage has completed with the status: ${buildStatus}.
+
+            Please find the attached logs for more details.
+
+            Regards,
+            Jenkins
+        """,
+        to: 's223362503@deakin.edu.au',
+        attachLog: true,
+        compressLog: true
+    )
 }
